@@ -39,13 +39,13 @@
       
     - name: Create NAT EC2 Instance
       ec2:
-        key_name: "{{ key_name }}"
-        image: "ami-08f90fed89a37985d"
+        key_name: jwlee
+        image: ami-08f90fed89a37985d
         instance_type: t2.micro
         region: "{{ region }}"
         vpc_subnet_id: "{{ private_subnet-2.subnet.id}}"
         instance_tags:
-          Name: "nat-instance-1"
+          Name: nat-instance-1
         wait: true
         count: 1
       register: nat_instance_1

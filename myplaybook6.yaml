@@ -58,7 +58,6 @@
         vpc_subnet_id: "{{ private_subnet_2.subnet.id}}"
         volumes:
           - device_name: /dev/sdb
-            snapshot: snap-abcdef12
             volume_type: io1
             iops: 1000
             volume_size: 200
@@ -121,4 +120,3 @@
           - dest: 0.0.0.0/0
             instance_id: "{{nat_instance_1.instance_id}}"
       register: public_route_table
-

@@ -15,34 +15,45 @@
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{vpc_1.vpc.id}}"
-        cidr: "{{subnet1_cidr}}"
+        cidr: "{{public_subnet_a_cidr}}"
         region: "{{region}}"
         az: "{{az_1}}"
         tags:
           Name: prd-seoul-pulic-subnet-a
-      register: prd-seoul-pulic-subnet-a
+      register: pulic_subnet_a
       
     - name: Create Public-Subnet-c
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{vpc_1.vpc.id}}"
-        cidr: "{{subnet1_cidr}}"
+        cidr: "{{public_subnet_c_cidr}}"
         region: "{{region}}"
         az: "{{az_2}}"
         tags:
           Name: prd-seoul-pulic-subnet-c
-      register: prd-seoul-pulic-subnet-c
+      register: pulic_subnet_c
           
-    - name: Create Private-Subnet-2
+    - name: Create Private-Subnet-a
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{vpc_1.vpc.id}}"
-        cidr: "{{subnet2_cidr}}"
+        cidr: "{{private_subnet_a_cidr}}"
         region: "{{region}}"
-        az: "{{az_2}}"
+        az: "{{az_1}}"
         tags:
           Name: prd-seoul-private-subnet-a
-      register: prd-seoul-private-subnet-a
+      register: private_subnet_a
+      
+      - name: Create Private-Subnet-c
+        ec2_vpc_subnet:
+          state: present
+          vpc_id: "{{vpc_1.vpc.id}}"
+          cidr: "{{private_subnet_c_cidr}}"
+          region: "{{region}}"
+          az: "{{az_2}}"
+          tags:
+            Name: prd-seoul-private-subnet-c
+        register: private_subnet_c
       
     - name: Create Bastion EC2 Instance
       ec2:
@@ -50,7 +61,7 @@
         image: ami-08f90fed89a37985d
         instance_type: t2.medium
         region: "{{ region }}"
-        vpc_subnet_id: "{{ prd-seoul-public-subnet-a.subnet.id }}"
+        vpc_subnet_id: "{{ public-subnet-a.subnet.id }}"
         instance_tags:
           Name: prd-seoul-bastion-a
         wait: true
@@ -63,7 +74,7 @@
         image: ami-08f90fed89a37985d
         instance_type: m5.xlarge
         region: "{{ region }}"
-        vpc_subnet_id: "{{ private_subnet_1.subnet.id}}"
+        vpc_subnet_id: "{{ private_subnet_a.subnet.id}}"
         volumes:
           - device_name: /dev/sdb
             volume_type: gp3
@@ -73,38 +84,25 @@
           Name: prd-seoul-proxy-a
         wait: true
         count: 1
-      register: prd-seoul-proxy-a
+      register: proxy_a
       
-        - name: Create NAT EC2 Instance-c
-          ec2:
-            key_name: "{{key_pair}}"
-            image: ami-08f90fed89a37985d
-            instance_type: m5.xlarge
-            region: "{{ region }}"
-            vpc_subnet_id: "{{ private_subnet_2.subnet.id}}"
-            volumes:
-              - device_name: /dev/sdb
-                volume_type: gp3
-                volume_size: 200
-                delete_on_termination: false
-            instance_tags:
-              Name: prd-seoul-proxy-c
-            wait: true
-            count: 1
-          register: prd-seoul-proxy-c
-      
-    - name: Create an ELB and attach a listener
-      elb_network_lb:
-        subnets:
-          - "{{private_subnet_1.subnet.id}}"
-          - "{{private_subnet_2.subnet.id}}"
-        listeners:
-          - Protocol: TCP
-            Port: 80 
-            DefaultActions:
-              - Type: forward
-                TargetGroupName: mytargetgroup 
-        state: present
+    - name: Create NAT EC2 Instance-c
+      ec2:
+        key_name: "{{key_pair}}"
+        image: ami-08f90fed89a37985d
+        instance_type: m5.xlarge
+        region: "{{ region }}"
+        vpc_subnet_id: "{{ private_subnet_c.subnet.id }}"
+        volumes:
+          - device_name: /dev/sdb
+            volume_type: gp3
+            volume_size: 200
+            delete_on_termination: false
+        instance_tags:
+          Name: prd-seoul-proxy-c
+        wait: true
+        count: 1
+      register: proxy_c
  
     - name: Create Internet gateway
       ec2_vpc_igw:
@@ -119,7 +117,7 @@
       ec2_vpc_nat_gateway:
         state: present
         region: "{{region}}"
-        subnet_id: "{{public_subnet_1.subnet.id}}"
+        subnet_id: "{{pulic_subnet_c.subnet.id}}"
       register: nat_1
         
     - name: Create Route Table-Public
@@ -129,12 +127,12 @@
         tags:
           Name: prd-seoul-rt
         subnets:
-          - "{{ prd-seoul-pulic-subnet-a }}"
-          - "{{ prd-seoul-pulic-subnet-c }}"
+          - "{{ pulic_subnet_a.subnet.id }}"
+          - "{{ pulic_subnet_c.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{igw_1.gateway_id}}"
-      register: prd-seoul-public-rt
+      register: prd_seoul_public_rt
 
     - name: Create Route Table-internal
       ec2_vpc_route_table:
@@ -143,8 +141,8 @@
         tags:
           Name: Internal
         subnets:
-          - "{{ private_subnet_1.subnet.id }}"
-          - "{{ private_subnet_2.subnet.id }}"
+          - "{{ private_subnet_a.subnet.id }}"
+          - "{{ private_subnet_c.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
       register: prd-seoul-private-rt

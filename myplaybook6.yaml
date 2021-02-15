@@ -6,37 +6,37 @@
     - name: Create VPC Interface 
       ec2_vpc_net:
         name: ansible-vpc-test-1	
-        cidr_block: "{{vpc-cidr}}"
+        cidr_block: "{{vpc_cidr}}"
         region: "{{region}}"
         tags:
           module: ec2_vpc_net
           this: works
         tenancy: dedicated
-      register: VPC-1
+      register: vpc_1
       
     - name: Create Public-Subnet-1
       ec2_vpc_subnet:
         state: present
-        vpc_id: "{{VPC-1.vpc.id}}"
-        cidr: "{{subnet1-cidr}}"
+        vpc_id: "{{vpc_1.vpc.id}}"
+        cidr: "{{subnet1_cidr}}"
         region: "{{region}}"
-        az: "{{az-1}}"
+        az: "{{az_1}}"
         tags:
-          Name: Public-Subnet-1
+          Name: public_subnet_1
           
     - name: Create Private-Subnet-2
       ec2_vpc_subnet:
         state: present
-        vpc_id: "{{VPC-1.vpc.id}}"
-        cidr: "{{subnet2-cidr}}"
+        vpc_id: "{{vpc_1.vpc.id}}"
+        cidr: "{{subnet2_cidr}}"
         region: "{{region}}"
-        az: "{{az-2}}"
+        az: "{{az_2}}"
         tags:
-          Name: Private-Subnet-2
+          Name: private_subnet_2
     
     - name: Create Internet gateway
       ec2_vpc_igw:
-        vpc_id: "{{VPC-1.vpc.id}}"
+        vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         state: present
       register: ansible_igw  
@@ -45,7 +45,7 @@
       ec2_vpc_nat_gateway:
         state: present
         region: "{{region}}"
-        subnet_id: "{{Public-Subnet-1.subnet.id}}"
+        subnet_id: "{{public_subnet_1.subnet.id}}"
         
       
       

@@ -5,16 +5,13 @@
   tasks:
     - name: Create VPC Interface 
       ec2_vpc_net:
-        name: ansible-vpc-test-1	
+        name: prd-seoul-vpc	
         cidr_block: "{{vpc_cidr}}"
         region: "{{region}}"
-        tags:
-          module: ec2_vpc_net
-          this: works
         tenancy: default
       register: vpc_1
       
-    - name: Create Public-Subnet-1
+    - name: Create Public-Subnet-a
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{vpc_1.vpc.id}}"
@@ -22,8 +19,19 @@
         region: "{{region}}"
         az: "{{az_1}}"
         tags:
-          Name: public_subnet_1
-      register: public_subnet_1
+          Name: prd-seoul-pulic-subnet-a
+      register: prd-seoul-pulic-subnet-a
+      
+    - name: Create Public-Subnet-c
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{vpc_1.vpc.id}}"
+        cidr: "{{subnet1_cidr}}"
+        region: "{{region}}"
+        az: "{{az_2}}"
+        tags:
+          Name: prd-seoul-pulic-subnet-c
+      register: prd-seoul-pulic-subnet-c
           
     - name: Create Private-Subnet-2
       ec2_vpc_subnet:
@@ -33,45 +41,44 @@
         region: "{{region}}"
         az: "{{az_2}}"
         tags:
-          Name: private_subnet_2
-      register: private_subnet_2
+          Name: prd-seoul-private-subnet-a
+      register: prd-seoul-private-subnet-a
       
     - name: Create Bastion EC2 Instance
       ec2:
-        key_name: jwlee
+        key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
         instance_type: t2.micro
         region: "{{ region }}"
-        vpc_subnet_id: "{{ public_subnet_1.subnet.id}}"
+        vpc_subnet_id: "{{ prd-seoul-public-subnet-a.subnet.id }}"
         instance_tags:
-          Name: bastion_instance
+          Name: prd-seoul-bastion-a
         wait: true
         count: 1
       register: bastion_instance
       
-    - name: Create NAT EC2 Instance
+    - name: Create NAT EC2 Instance-a
       ec2:
-        key_name: jwlee
+        key_name: ami-08f90fed89a37985d
         image: ami-08f90fed89a37985d
         instance_type: m5.xlarge
         region: "{{ region }}"
-        vpc_subnet_id: "{{ private_subnet_2.subnet.id}}"
+        vpc_subnet_id: "{{ private_subnet_1.subnet.id}}"
         volumes:
           - device_name: /dev/sdb
-            volume_type: io1
-            iops: 1000
+            volume_type: gp3
             volume_size: 200
             delete_on_termination: false
         instance_tags:
-          Name: nat-instance-1
+          Name: prd-seoul-proxy-a
         wait: true
         count: 1
-      register: nat_instance_1
+      register: prd-seoul-proxy-a
       
     - name: Create an ELB and attach a listener
       elb_network_lb:
-        name: nlb-8f90fed89a379
         subnets:
+          - "{{private_subnet_1.subnet.id}}"
           - "{{private_subnet_2.subnet.id}}"
         listeners:
           - Protocol: TCP
@@ -86,6 +93,8 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         state: present
+        tags:
+          - name: prd-seoul-igw
       register: igw_1  
       
     - name: Create Nat Gateway 

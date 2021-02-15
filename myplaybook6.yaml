@@ -36,7 +36,7 @@
     
     - name: Create Internet gateway
       ec2_vpc_igw:
-        vpc_id: "{{ansible_vpc.id}}"
+        vpc_id: "{{ansible_vpc.vpc.id}}"
         state: present
       register: ansible_igw  
       

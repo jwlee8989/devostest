@@ -34,20 +34,34 @@
         az: "{{az_2}}"
         tags:
           Name: private_subnet_2
-      register: public_subnet_2    
+      register: private_subnet_2    
     
     - name: Create Internet gateway
       ec2_vpc_igw:
         vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         state: present
-      register: ansible_igw  
+      register: igw_1  
       
     - name: Create Nat Gateway 
       ec2_vpc_nat_gateway:
         state: present
         region: "{{region}}"
         subnet_id: "{{public_subnet_1.subnet.id}}"
+      register: nat_1
         
-      
-      
+    - name: Create Route Table
+      ec2_vpc_route_table:
+        vpc_id: "{{vpc_1.vpc.id}}"
+        region: "{{region}}"
+        tags:
+          Name: Public
+        subnets:
+          - "{{ private_subnet_2.subnet.id }}"
+          - "{{ public_subent_1.subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw_1.gateway_id }}"
+          - dest: 0.0.0.0/0
+            instance_id: ""{{nat_1.instance_id}}"
+      register: public_route_table

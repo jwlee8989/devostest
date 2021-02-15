@@ -8,12 +8,3 @@
       module: ec2_vpc_net
       this: works
     tenancy: dedicated
-    
-- name: Create Subnet Interface
-  vpc_subnet:
-    state: present
-    vpc_id: {{id}}
-    cidr: 10.0.1.0/24
-    tags:
-      Name: ansible_Subnet
-  register: ansible_subnet

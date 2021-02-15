@@ -145,4 +145,4 @@
           - "{{ private_subnet_c.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
-      register: prd-seoul-private-rt
+      register: prd_seoul_private_rt

@@ -110,8 +110,7 @@
         region: "{{region}}"
         state: present
         tags:
-          - name: prd-seoul-igw
-            type: igw
+          Name: prd-seoul-igw
       register: igw_1  
       
     - name: Create Nat Gateway 

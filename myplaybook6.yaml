@@ -62,5 +62,5 @@
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{igw_1.gateway_id}}"
-            instance_id: "{{nat_1.instance_id}}"
+            instance_id: "{{nat_1.gateway_id}}"
       register: public_route_table

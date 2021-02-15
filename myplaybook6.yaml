@@ -5,7 +5,7 @@
   tasks:
     - name: Create VPC Interface 
       ec2_vpc_net:
-        name: ansible-vpc-test	
+        name: ansible-vpc-test-1	
         cidr_block: 10.0.0.0/16
         region: ap-northeast-2
         tags:
@@ -13,3 +13,27 @@
           this: works
         tenancy: dedicated
       register: ansible_vpc
+      
+    - name: Create Subnet1
+      vpc_subnet:
+        state: present
+        vpc_id: "{{ansible_vpc.id}}"
+        cidr: 10.0.1.0/24
+        tags:
+          Name: ansible_Subnet
+          
+    - name: Create Subnet2
+      vpc_subnet:
+        state: present
+        vpc_id: "{{ansible_vpc.id}}"
+        cidr: 10.0.2.0/24
+        tags:
+          Name: ansible_Subnet  
+    
+    - name: Create Internet gateway
+      ec2_vpc_igw:
+        vpc_id: "{{ansible_vpc.id}}"
+        state: present
+      register: ansible_igw  
+      
+      

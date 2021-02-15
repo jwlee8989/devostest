@@ -146,5 +146,5 @@
           - "{{ private_subnet_c.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
-            nat_gateway_id: "{{nat_1.gateway_id}}"
+            nat_gateway_id: "{{nat_1.nat_gateway_id}}"
       register: prd_seoul_private_rt

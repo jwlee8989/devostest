@@ -36,19 +36,51 @@
           Name: private_subnet_2
       register: private_subnet_2
       
-      
-    - name: Create NAT EC2 Instance
+    - name: Create Bastion EC2 Instance
       ec2:
         key_name: jwlee
         image: ami-08f90fed89a37985d
         instance_type: t2.micro
         region: "{{ region }}"
+        vpc_subnet_id: "{{ public_subnet_1.subnet.id}}"
+        instance_tags:
+          Name: bastion_instance
+        wait: true
+        count: 1
+      register: bastion_instance
+      
+    - name: Create NAT EC2 Instance
+      ec2:
+        key_name: jwlee
+        image: ami-08f90fed89a37985d
+        instance_type: m5.xlarge
+        region: "{{ region }}"
         vpc_subnet_id: "{{ private_subnet_2.subnet.id}}"
+        volumes:
+          - device_name: /dev/sdb
+            snapshot: snap-abcdef12
+            volume_type: io1
+            iops: 1000
+            volume_size: 200
+            delete_on_termination: false
         instance_tags:
           Name: nat-instance-1
         wait: true
         count: 1
       register: nat_instance_1
+      
+    - name: Create an ELB and attach a listener
+      elb_network_lb:
+        name: nlb-8f90fed89a379
+        subnets:
+          - "{{private_subnet_2.subnet.id}}"
+        listeners:
+          - Protocol: TCP
+            Port: 80 
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: mytargetgroup 
+        state: present
  
     - name: Create Internet gateway
       ec2_vpc_igw:
@@ -89,3 +121,4 @@
           - dest: 0.0.0.0/0
             instance_id: "{{nat_instance_1.instance_id}}"
       register: public_route_table
+

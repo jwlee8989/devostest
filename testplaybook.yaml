@@ -20,7 +20,7 @@
         az: "{{az_1}}"
         tags:
           Name: prd-seoul-pulic-subnet-a
-      register: pulic_subnet_a
+      register: public_subnet_a
       
     - name: Create Public-Subnet-c
       ec2_vpc_subnet:

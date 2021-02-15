@@ -2,9 +2,18 @@
 - name: Create VPC Interface 
   ec2_vpc_net:
     name: ansible-vpc-test	
-    cidr_block: 10.10.0.0/16
+    cidr_block: 10.0.1.0/16
     region: ap-northeast-2
     tags:
       module: ec2_vpc_net
       this: works
     tenancy: dedicated
+    
+- name: Create Subnet Interface
+  vpc_subnet:
+    state: present
+    vpc_id: {{id}}
+    cidr: 10.0.1.0/24
+    tags:
+      Name: ansible_Subnet
+  register: ansible_subnet

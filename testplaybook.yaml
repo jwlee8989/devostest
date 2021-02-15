@@ -31,7 +31,7 @@
         az: "{{az_2}}"
         tags:
           Name: prd-seoul-pulic-subnet-c
-      register: pulic_subnet_c
+      register: public_subnet_c
           
     - name: Create Private-Subnet-a
       ec2_vpc_subnet:
@@ -117,7 +117,7 @@
       ec2_vpc_nat_gateway:
         state: present
         region: "{{region}}"
-        subnet_id: "{{pulic_subnet_c.subnet.id}}"
+        subnet_id: "{{public_subnet_c.subnet.id}}"
       register: nat_1
         
     - name: Create Route Table-Public
@@ -127,8 +127,8 @@
         tags:
           Name: prd-seoul-rt
         subnets:
-          - "{{ pulic_subnet_a.subnet.id }}"
-          - "{{ pulic_subnet_c.subnet.id }}"
+          - "{{ public_subnet_a.subnet.id }}"
+          - "{{ public_subnet_c.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{igw_1.gateway_id}}"

@@ -61,7 +61,7 @@
         image: ami-08f90fed89a37985d
         instance_type: t2.medium
         region: "{{ region }}"
-        vpc_subnet_id: "{{ public-subnet-a.subnet.id }}"
+        vpc_subnet_id: "{{ public_subnet_a.subnet.id }}"
         instance_tags:
           Name: prd-seoul-bastion-a
         wait: true

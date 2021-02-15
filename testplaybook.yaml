@@ -111,6 +111,7 @@
         state: present
         tags:
           - name: prd-seoul-igw
+            type: igw
       register: igw_1  
       
     - name: Create Nat Gateway 

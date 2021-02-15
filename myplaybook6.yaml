@@ -23,6 +23,7 @@
         az: "{{az_1}}"
         tags:
           Name: public_subnet_1
+      register: public_subnet_1 
           
     - name: Create Private-Subnet-2
       ec2_vpc_subnet:
@@ -33,6 +34,7 @@
         az: "{{az_2}}"
         tags:
           Name: private_subnet_2
+      register: public_subnet_2    
     
     - name: Create Internet gateway
       ec2_vpc_igw:

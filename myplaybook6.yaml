@@ -19,6 +19,7 @@
         state: present
         vpc_id: "{{ansible_vpc.vpc.id}}"
         cidr: 10.0.1.0/24
+        region: ap-northeast-2
         az: ap-northeast-2a
         tags:
           Name: ansible_Subnet1
@@ -28,6 +29,7 @@
         state: present
         vpc_id: "{{ansible_vpc.vpc.id}}"
         cidr: 10.0.2.0/24
+        region: ap-northeast-2
         az: ap-northeast-2c
         tags:
           Name: ansible_Subnet2

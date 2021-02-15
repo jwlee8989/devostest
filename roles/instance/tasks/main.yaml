@@ -1,20 +1,26 @@
 ---
-- name: Create VPC Interface 
-  ec2_vpc_net:
-    name: ansible-vpc-test	
-    cidr_block: 10.0.0.0/16
-    region: ap-northeast-2
-    tags:
-      module: ec2_vpc_net
-      this: works
-    tenancy: dedicated
-  register: ansible_vpc
+- name: Create EC2 Instance task1
+  ec2:
+    key_name: "{{ key_name }}"
+    image: "{{ image }}"
+    instance_type: t2.micro
+    region: "{{ region }}"
+    vpc_subnet_id: "{{vpc_subnet_id}}"
+    group_id: "{{sec_group}}"
+    instance_tags:
+      Name: "{{instance_name}}"
+    wait: true
+    count: 1
 
-- name: Create Subnet Interface
-  vpc_subnet:
-    state: present
-    vpc_id: "{{ansible_vpc.id}}"
-    cidr: 10.0.1.0/24
-    tags:
-      Name: ansible_Subnet
-  register: ansible_subnet
+- name: Create EC2 Instance task2
+  ec2:
+    key_name: "{{ key_name }}"
+    image: "{{ image }}"
+    instance_type: t2.micro
+    region: "{{ region }}"
+    vpc_subnet_id: "{{vpc_subnet_id}}"
+    group_id: "{{sec_group}}"
+    instance_tags:
+      Name: "{{instance_name}}"
+    wait: true
+    count: 1

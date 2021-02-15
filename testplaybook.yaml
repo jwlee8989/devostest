@@ -44,16 +44,16 @@
           Name: prd-seoul-private-subnet-a
       register: private_subnet_a
       
-      - name: Create Private-Subnet-c
-        ec2_vpc_subnet:
-          state: present
-          vpc_id: "{{vpc_1.vpc.id}}"
-          cidr: "{{private_subnet_c_cidr}}"
-          region: "{{region}}"
-          az: "{{az_2}}"
-          tags:
-            Name: prd-seoul-private-subnet-c
-        register: private_subnet_c
+    - name: Create Private-Subnet-c
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{vpc_1.vpc.id}}"
+        cidr: "{{private_subnet_c_cidr}}"
+        region: "{{region}}"
+        az: "{{az_2}}"
+        tags:
+          Name: prd-seoul-private-subnet-c
+      register: private_subnet_c
       
     - name: Create Bastion EC2 Instance
       ec2:

@@ -13,11 +13,3 @@
           this: works
         tenancy: dedicated
       register: ansible_vpc
-
-    - name: Create Subnet Interface
-      vpc_subnet:
-        state: present
-        vpc_id: "{{ansible_vpc.id}}"
-        cidr: 10.0.1.0/24
-        tags:
-          Name: ansible_Subnet

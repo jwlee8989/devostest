@@ -15,7 +15,7 @@
       register: ansible_vpc
       
     - name: Create Subnet1
-      vpc_subnet:
+      ec2_vpc_subnet:
         state: present
         vpc_id: "{{ansible_vpc.id}}"
         cidr: 10.0.1.0/24
@@ -23,7 +23,7 @@
           Name: ansible_Subnet
           
     - name: Create Subnet2
-      vpc_subnet:
+      ec2_vpc_subnet:
         state: present
         vpc_id: "{{ansible_vpc.id}}"
         cidr: 10.0.2.0/24

@@ -12,33 +12,40 @@
           module: ec2_vpc_net
           this: works
         tenancy: dedicated
-      register: ansible_vpc
+      register: VPC-1
       
-    - name: Create Subnet1
+    - name: Create Public-Subnet-1
       ec2_vpc_subnet:
         state: present
-        vpc_id: "{{ansible_vpc.vpc.id}}"
+        vpc_id: "{{VPC-1.vpc.id}}"
         cidr: "{{subnet1-cidr}}"
         region: "{{region}}"
         az: "{{az-1}}"
         tags:
-          Name: ansible_Subnet1
+          Name: Public-Subnet-1
           
-    - name: Create Subnet2
+    - name: Create Private-Subnet-2
       ec2_vpc_subnet:
         state: present
-        vpc_id: "{{ansible_vpc.vpc.id}}"
+        vpc_id: "{{VPC-1.vpc.id}}"
         cidr: "{{subnet2-cidr}}"
         region: "{{region}}"
         az: "{{az-2}}"
         tags:
-          Name: ansible_Subnet2
+          Name: Private-Subnet-2
     
     - name: Create Internet gateway
       ec2_vpc_igw:
-        vpc_id: "{{ansible_vpc.vpc.id}}"
+        vpc_id: "{{VPC-1.vpc.id}}"
         region: "{{region}}"
         state: present
       register: ansible_igw  
+      
+    - name: Create Nat Gateway 
+      ec2_vpc_nat_gateway:
+        state: present
+        region: "{{region}}"
+        subnet_id: "{{Public-Subnet-1.subnet.id}}"
+        
       
       

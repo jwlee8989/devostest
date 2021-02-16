@@ -126,7 +126,7 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         tags:
-          Name: prd-seoul-rt
+          Name: prd-seoul--rt
         subnets:
           - "{{ public_subnet_a.subnet.id }}"
           - "{{ public_subnet_c.subnet.id }}"
@@ -140,7 +140,7 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         tags:
-          Name: Internal
+          Name: prd-seoul-internal-rt
         subnets:
           - "{{ private_subnet_a.subnet.id }}"
           - "{{ private_subnet_c.subnet.id }}"

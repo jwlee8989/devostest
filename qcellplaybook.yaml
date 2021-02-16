@@ -32,22 +32,8 @@
         tags:
           Name: prd-seoul-pulic-subnet-c
       register: public_subnet_c
-             
-    - name: Create Bastion EC2 Instance
-      ec2:
-        key_name: "{{key_pair}}"
-        image: ami-08f90fed89a37985d
-        instance_type: t2.medium
-        region: "{{ region }}"
-        assign_public_ip: yes
-        vpc_subnet_id: "{{ public_subnet_a.subnet.id }}"
-        instance_tags:
-          Name: prd-seoul-bastion-a
-        wait: true
-        count: 1
-      register: bastion_instance
-      
-    - name: Create NAT EC2 Instance-a
+                  
+    - name: Create Windows 2016 EC2 Instance-a
       ec2:
         key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
@@ -58,14 +44,14 @@
           - device_name: /dev/sdb
             volume_type: gp3
             volume_size: 200
-            delete_on_termination: false
+            delete_on_termination: true
         instance_tags:
           Name: prd-seoul-proxy-a
         wait: true
         count: 1
       register: proxy_a
       
-    - name: Create NAT EC2 Instance-c
+    - name: Create Windows 2016 EC2 Instance-c
       ec2:
         key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
@@ -76,7 +62,7 @@
           - device_name: /dev/sdb
             volume_type: gp3
             volume_size: 200
-            delete_on_termination: false
+            delete_on_termination: true
         instance_tags:
           Name: prd-seoul-proxy-c
         wait: true

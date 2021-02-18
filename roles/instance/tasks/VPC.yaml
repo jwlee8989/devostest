@@ -1,7 +1,8 @@
+---
 - name: Create VPC Interface 
-      ec2_vpc_net:
-        name: prd-seoul-vpc	
-        cidr_block: "{{vpc_cidr}}"
-        region: "{{region}}"
-        tenancy: default
-      register: vpc_1
+  ec2_vpc_net:
+    name: prd-seoul-vpc	
+    cidr_block: "{{vpc_cidr}}"
+    region: "{{region}}"
+    tenancy: default
+  register: vpc_1

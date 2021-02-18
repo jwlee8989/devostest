@@ -5,7 +5,7 @@
   tasks:
     - name: Create VPC Interface 
       ec2_vpc_net:
-        name: "{{prefix}}"-vpc	
+        name: "{{prefix}}-vpc"
         cidr_block: "{{vpc_cidr}}"
         region: "{{region}}"
         tenancy: default

@@ -92,5 +92,53 @@
             gateway_id: "{{igw_1.gateway_id}}"
       register: prd_seoul_public_rt
       
+    - name: Create a target group with instance targets http
+      community.aws.elb_target_group:
+        name: targetgroup-80
+        protocol: tcp
+        port: 80
+        vpc_id: "{{vpc_1.vpc.id}}"
+        health_check_protocol: http
+        health_check_path: /
+        successful_response_codes: "200,250-260"
+        targets:
+          - Id: "{{ec_1.instance.ip}}"
+            Port: 80
+          - Id: "{{ec_2.instance.ip}}"
+            Port: 80
+        state: present
+        wait_timeout: 200
+        wait: True
+    
+    - name: Create a target group with instance targets https
+      community.aws.elb_target_group:
+        name: targetgroup-443
+        protocol: tcp
+        port: 443
+        vpc_id: "{{vpc_1.vpc.id}}"
+        health_check_protocol: http
+        health_check_path: /
+        successful_response_codes: "200,250-260"
+        targets:
+          - Id: "{{ec_1.instance.ip}}"
+            Port: 443
+          - Id: "{{ec_2.instance.ip}}"
+            Port: 443
+        state: present
+        wait_timeout: 200
+        wait: True
+
      - name: Creat Loard Balancer
+       community.aws.elb_network_lb:
+        name: "{{prefix}}-lb-ext"
+        subnet_mappings:
+          - SubnetId: subnet-012345678
+            AllocationId: eipalloc-aabbccdd
+        listeners:
+          - Protocol: TCP # Required. The protocol for connections from clients to the load balancer (TCP, TLS, UDP or TCP_UDP) (case-sensitive).
+            Port: 80 # Required. The port on which the load balancer is listening.
+            DefaultActions:
+              - Type: forward # Required. Only 'forward' is accepted at this time
+                TargetGroupName: mytargetgroup # Required. The name of the target group
+        state: present
      

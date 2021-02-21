@@ -53,7 +53,7 @@
      
      - name: allocate a new elastic IP and associate it with an instance
        community.aws.ec2_eip:
-         device_id: "{{ec2_1.instance.ip}}"
+         device_id: "{{ec2_1.instance_id }}"
       
      - name: Create EC2 instance-2
       ec2:
@@ -75,7 +75,7 @@
     
     - name: allocate a new elastic IP and associate it with an instance
       community.aws.ec2_eip:
-        device_id: "{{ec2_2.instance.ip}}"
+        device_id: "{{ec2_2.instance_id}}"
         
     - name: Create Internet gateway
       ec2_vpc_igw:
@@ -110,9 +110,9 @@
         health_check_path: /
         successful_response_codes: "200,250-260"
         targets:
-          - Id: "{{ec_1.instance.ip}}"
+          - Id: "{{ec_1.instance.instance_id}}"
             Port: 80
-          - Id: "{{ec_2.instance.ip}}"
+          - Id: "{{ec_2.instance.instance_id}}"
             Port: 80
         state: present
         wait_timeout: 200
@@ -128,9 +128,9 @@
         health_check_path: /
         successful_response_codes: "200,250-260"
         targets:
-          - Id: "{{ec_1.instance.ip}}"
+          - Id: "{{ec_1.instance.instance_id}}"
             Port: 443
-          - Id: "{{ec_2.instance.ip}}"
+          - Id: "{{ec_2.instance.instance_id}}"
             Port: 443
         state: present
         wait_timeout: 200
@@ -140,13 +140,20 @@
        community.aws.elb_network_lb:
         name: "{{prefix}}-lb-ext"
         subnet_mappings:
-          - SubnetId: subnet-012345678
-            AllocationId: eipalloc-aabbccdd
+          - SubnetId: "{{public_subnet_1.subnet.id}}"
+            AllocationId: -
+          - SubnetId: "{{public_subnet_2.subnet.id}}"
+            AllocationId: -
         listeners:
           - Protocol: TCP # Required. The protocol for connections from clients to the load balancer (TCP, TLS, UDP or TCP_UDP) (case-sensitive).
             Port: 80 # Required. The port on which the load balancer is listening.
             DefaultActions:
               - Type: forward # Required. Only 'forward' is accepted at this time
-                TargetGroupName: mytargetgroup # Required. The name of the target group
+                TargetGroupName: "{{prefix}}-tg-http" # Required. The name of the target group
+          - Protocol: TCP
+            Port: 443
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: "{{prefix}}-tg-https"
         state: present
      

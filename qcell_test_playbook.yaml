@@ -33,42 +33,50 @@
           Name: "{{prefix}}-pulic-subnet-{{az__2}}"
       register: "public_subnet_2"
             
-    - name: Create EC2 instance-2 
+    - name: Create EC2 instance-1
       ec2:
         key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
-        instance_type: m5.xlarge
+        instance_type: "{{instance_type}}"
         region: "{{ region }}"
         vpc_subnet_id: "{{public_sub_1.subnet.id }}"
         volumes:
           - device_name: /dev/sdb
             volume_type: gp3
-            volume_size: 200
+            volume_size: "{{volume_size}}"
             delete_on_termination: false
         instance_tags:
           Name: prd-seoul-proxy-{{az_1}}
         wait: true
         count: 1
-      register: ec_1
+      register: ec2_1
+     
+     - name: allocate a new elastic IP and associate it with an instance
+       community.aws.ec2_eip:
+         device_id: "{{ec2_1.instance.ip}}"
       
      - name: Create EC2 instance-2
       ec2:
         key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
-        instance_type: m5.xlarge
+        instance_type: "{{instance_type}}"
         region: "{{ region }}"
         vpc_subnet_id: "{{public_sub_1.subnet.id }}"
         volumes:
           - device_name: /dev/sdb
             volume_type: gp3
-            volume_size: 200
+            volume_size: "{{volume_size}}"
             delete_on_termination: false
         instance_tags:
           Name: prd-seoul-proxy-{{az_2}}
         wait: true
         count: 1
-      register: ec_2
-      
+      register: ec2_2
+    
+    - name: allocate a new elastic IP and associate it with an instance
+      community.aws.ec2_eip:
+        device_id: "{{ec2_2.instance.ip}}"
+        
     - name: Create Internet gateway
       ec2_vpc_igw:
         vpc_id: "{{vpc_1.vpc.id}}"
@@ -83,14 +91,14 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         region: "{{region}}"
         tags:
-          Name: prd-seoul-rt
+          Name: "{{prefix}}-rt"
         subnets:
-          - "{{ public_subnet_a.subnet.id }}"
-          - "{{ public_subnet_c.subnet.id }}"
+          - "{{ public_subnet_1.subnet.id }}"
+          - "{{ public_subnet_2.subnet.id }}"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{igw_1.gateway_id}}"
-      register: prd_seoul_public_rt
+      register: public_rt
       
     - name: Create a target group with instance targets http
       community.aws.elb_target_group:

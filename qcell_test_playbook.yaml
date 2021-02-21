@@ -51,11 +51,11 @@
         count: 1
       register: ec2_1
      
-     - name: allocate a new elastic IP and associate it with an instance
+    - name: allocate a new elastic IP and associate it with an instance
        community.aws.ec2_eip:
          device_id: "{{ec2_1.instance_id }}"
       
-     - name: Create EC2 instance-2
+    - name: Create EC2 instance-2
       ec2:
         key_name: "{{key_pair}}"
         image: ami-08f90fed89a37985d
@@ -136,8 +136,8 @@
         wait_timeout: 200
         wait: True
 
-     - name: Creat Loard Balancer
-       community.aws.elb_network_lb:
+    - name: Creat Loard Balancer
+      community.aws.elb_network_lb:
         name: "{{prefix}}-lb-ext"
         subnet_mappings:
           - SubnetId: "{{public_subnet_1.subnet.id}}"

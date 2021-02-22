@@ -17,7 +17,7 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         cidr: "{{public_subnet_a_cidr}}"
         region: "{{region}}"
-        az: "{{region}{az_1}}"
+        az: "{{region}}{{az_1}}"
         tags:
           Name: "{{prefix}}-pulic-subnet-{{az_1}}"
       register: "public_subnet_1"
@@ -28,9 +28,9 @@
         vpc_id: "{{vpc_1.vpc.id}}"
         cidr: "{{public_subnet_c_cidr}}"
         region: "{{region}}"
-        az: "{{region}{az_2}}"
+        az: "{{region}}{{az_2}}"
         tags:
-          Name: "{{prefix}}-pulic-subnet-{{az__2}}"
+          Name: "{{prefix}}-pulic-subnet-{{az_2}}"
       register: "public_subnet_2"
             
     - name: Create EC2 instance-1

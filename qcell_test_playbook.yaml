@@ -52,7 +52,7 @@
       register: ec2_1
      
     - name: allocate a new elastic IP and associate it with an instance
-      community.aws.ec2_eip:
+      ec2_eip:
         device_id: "{{ec2_1.instance_id }}"
       
     - name: Create EC2 instance-2
@@ -74,7 +74,7 @@
       register: ec2_2
     
     - name: allocate a new elastic IP and associate it with an instance
-      community.aws.ec2_eip:
+      ec2_eip:
         device_id: "{{ec2_2.instance_id}}"
         
     - name: Create Internet gateway
@@ -101,7 +101,7 @@
       register: public_rt
       
     - name: Create a target group with instance targets http
-      community.aws.elb_target_group:
+      elb_target_group:
         name: targetgroup-80
         protocol: tcp
         port: 80
@@ -119,7 +119,7 @@
         wait: True
     
     - name: Create a target group with instance targets https
-      community.aws.elb_target_group:
+      elb_target_group:
         name: targetgroup-443
         protocol: tcp
         port: 443
@@ -148,7 +148,7 @@
       register: nlb_eip_2  
     
     - name: Creat Loard Balancer
-      community.aws.elb_network_lb:
+      elb_network_lb:
         name: "{{prefix}}-lb-ext"
         subnet_mappings:
           - SubnetId: "{{public_subnet_1.subnet.id}}"

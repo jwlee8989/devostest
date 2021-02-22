@@ -92,24 +92,6 @@
             gateway_id: "{{igw_1.gateway_id}}"
       register: public_rt
         
-    - name: Create a target group with instance targets https
-      elb_target_group:
-        name: targetgroup-443
-        protocol: tcp
-        port: 443
-        vpc_id: "{{vpc_1.vpc.id}}"
-        health_check_protocol: http
-        health_check_path: /
-        successful_response_codes: "200,250-260"
-        targets:
-          - Id: "{{ec2_1.instances.id}}"
-            Port: 443
-          - Id: "{{ec2_2.instances.id}}"
-            Port: 443
-        state: present
-        wait_timeout: 200
-        wait: True
-        
     - name: allocate a new elastic IP without associating it to anything
       ec2_eip:
         state: present

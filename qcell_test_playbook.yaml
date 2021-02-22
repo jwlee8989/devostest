@@ -91,25 +91,7 @@
           - dest: 0.0.0.0/0
             gateway_id: "{{igw_1.gateway_id}}"
       register: public_rt
-      
-    - name: Create a target group with instance targets http
-      elb_target_group:
-        name: targetgroup-80
-        protocol: tcp
-        port: 80
-        vpc_id: "{{vpc_1.vpc.id}}"
-        health_check_protocol: http
-        health_check_path: /
-        successful_response_codes: "200,250-260"
-        targets:
-          - Id: "{{ec2_1.instances.id}}"
-            Port: 80
-          - Id: "{{ec2_2.instances.id}}"
-            Port: 80
-        state: present
-        wait_timeout: 200
-        wait: True
-    
+        
     - name: Create a target group with instance targets https
       elb_target_group:
         name: targetgroup-443
@@ -132,31 +114,8 @@
       ec2_eip:
         state: present
       register: nlb_eip_1
-      
-      
+            
     - name: allocate a new elastic IP without associating it to anything
       ec2_eip:
         state: present
-      register: nlb_eip_2  
-    
-    - name: Creat Loard Balancer
-      elb_network_lb:
-        name: "{{prefix}}-lb-ext"
-        subnet_mappings:
-          - SubnetId: "{{public_subnet_1.subnet.id}}"
-            AllocationId: "{{nlb_eip_1.allocation_id }}"
-          - SubnetId: "{{public_subnet_2.subnet.id}}"
-            AllocationId: "{{nlb_eip_2.allocation_id }}"
-        listeners:
-          - Protocol: TCP # Required. The protocol for connections from clients to the load balancer (TCP, TLS, UDP or TCP_UDP) (case-sensitive).
-            Port: 80 # Required. The port on which the load balancer is listening.
-            DefaultActions:
-              - Type: forward # Required. Only 'forward' is accepted at this time
-                TargetGroupName: "{{prefix}}-tg-http" # Required. The name of the target group
-          - Protocol: TCP
-            Port: 443
-            DefaultActions:
-              - Type: forward
-                TargetGroupName: "{{prefix}}-tg-https"
-        state: present
-     
+      register: nlb_eip_2   

@@ -50,11 +50,7 @@
         wait: true
         count: 1
       register: ec2_1
-     
-    - name: allocate a new elastic IP and associate it with an instance
-      ec2_eip:
-        device_id: "{{ec2_1.instances.id}}"
-      
+           
     - name: Create EC2 instance-2
       ec2:
         key_name: "{{key_pair}}"
@@ -72,11 +68,7 @@
         wait: true
         count: 1
       register: ec2_2
-    
-    - name: allocate a new elastic IP and associate it with an instance
-      ec2_eip:
-        device_id: "{{ec2_2.instances.id}}"
-        
+          
     - name: Create Internet gateway
       ec2_vpc_igw:
         vpc_id: "{{vpc_1.vpc.id}}"

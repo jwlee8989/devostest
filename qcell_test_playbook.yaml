@@ -137,13 +137,13 @@
         wait: True
         
     - name: allocate a new elastic IP without associating it to anything
-      community.aws.ec2_eip:
+      ec2_eip:
         state: present
       register: nlb_eip_1
       
       
     - name: allocate a new elastic IP without associating it to anything
-      community.aws.ec2_eip:
+      ec2_eip:
         state: present
       register: nlb_eip_2  
     

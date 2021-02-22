@@ -120,9 +120,9 @@
         health_check_path: /
         successful_response_codes: "200,250-260"
         targets:
-          - Id: "{{ec_1.instances.id}}"
+          - Id: "{{ec2_1.instances.id}}"
             Port: 443
-          - Id: "{{ec_2.instances.id}}"
+          - Id: "{{ec2_2.instances.id}}"
             Port: 443
         state: present
         wait_timeout: 200

@@ -53,7 +53,7 @@
      
     - name: allocate a new elastic IP and associate it with an instance
       ec2_eip:
-        device_id: "{{ec2_1.instance_ids }}"
+        device_id: "{{ec2_1.instances_id }}"
       
     - name: Create EC2 instance-2
       ec2:
@@ -75,7 +75,7 @@
     
     - name: allocate a new elastic IP and associate it with an instance
       ec2_eip:
-        device_id: "{{ec2_2.instance_ids}}"
+        device_id: "{{ec2_2.instances_id}}"
         
     - name: Create Internet gateway
       ec2_vpc_igw:
@@ -110,9 +110,9 @@
         health_check_path: /
         successful_response_codes: "200,250-260"
         targets:
-          - Id: "{{ec_1.instance.instance_ids}}"
+          - Id: "{{ec_1.instances_id}}"
             Port: 80
-          - Id: "{{ec_2.instance.instance_ids}}"
+          - Id: "{{ec_2.instances_id}}"
             Port: 80
         state: present
         wait_timeout: 200
@@ -128,9 +128,9 @@
         health_check_path: /
         successful_response_codes: "200,250-260"
         targets:
-          - Id: "{{ec_1.instance.instance_ids}}"
+          - Id: "{{ec_1.instances_id}}"
             Port: 443
-          - Id: "{{ec_2.instance.instance_ids}}"
+          - Id: "{{ec_2.instances_id}}"
             Port: 443
         state: present
         wait_timeout: 200

@@ -52,8 +52,8 @@
       register: ec2_1
      
     - name: allocate a new elastic IP and associate it with an instance
-       community.aws.ec2_eip:
-         device_id: "{{ec2_1.instance_id }}"
+      community.aws.ec2_eip:
+        device_id: "{{ec2_1.instance_id }}"
       
     - name: Create EC2 instance-2
       ec2:

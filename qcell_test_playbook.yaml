@@ -39,7 +39,7 @@
         image: ami-08f90fed89a37985d
         instance_type: "{{instance_type}}"
         region: "{{ region }}"
-        vpc_subnet_id: "{{public_sub_1.subnet.id }}"
+        vpc_subnet_id: "{{public_subnet_1.subnet.id }}"
         volumes:
           - device_name: /dev/sdb
             volume_type: gp3
@@ -61,7 +61,7 @@
         image: ami-08f90fed89a37985d
         instance_type: "{{instance_type}}"
         region: "{{ region }}"
-        vpc_subnet_id: "{{public_sub_1.subnet.id }}"
+        vpc_subnet_id: "{{public_subnet_1.subnet.id }}"
         volumes:
           - device_name: /dev/sdb
             volume_type: gp3

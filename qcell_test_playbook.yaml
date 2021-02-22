@@ -135,15 +135,25 @@
         state: present
         wait_timeout: 200
         wait: True
-
+    - name: allocate a new elastic IP without associating it to anything
+      community.aws.ec2_eip:
+        state: present
+      register: nlb-eip-1
+      
+      
+    - name: allocate a new elastic IP without associating it to anything
+      community.aws.ec2_eip:
+        state: present
+      register: nlb-eip-2  
+    
     - name: Creat Loard Balancer
       community.aws.elb_network_lb:
         name: "{{prefix}}-lb-ext"
         subnet_mappings:
           - SubnetId: "{{public_subnet_1.subnet.id}}"
-            AllocationId: -
+            AllocationId: "{{nlb_eip_1.allocation_id }}"
           - SubnetId: "{{public_subnet_2.subnet.id}}"
-            AllocationId: -
+            AllocationId: "{{nlb_eip_2.allocation_id }}"
         listeners:
           - Protocol: TCP # Required. The protocol for connections from clients to the load balancer (TCP, TLS, UDP or TCP_UDP) (case-sensitive).
             Port: 80 # Required. The port on which the load balancer is listening.
